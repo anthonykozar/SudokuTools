@@ -223,13 +223,30 @@ public class SudokuPuzzle
 		return new int[0];
 	}
 	
+	/** setCellValue() sets  the cell's value and its status either to SOLVED (if value is positive)
+		or to UNSOLVED (if value is EMPTY_CELL).  I.e.  This function removes CLUE status from the cell.
+	 */
 	public void setCellValue(int row, int col, int value)
 	{
 		if (row >= 0 && row < size && col >= 0 && col < size && (value == EMPTY_CELL || (value >= 1 && value <= size))) {
 			cells[row][col] = value;
+			isClue[row][col] = false;
 		}
 		else {
 			System.err.printf("SudokuPuzzle.setCellValue(): parameter(s) out of range, row=%d, col=%d, value=%d\n", row, col, value);
+			// return PARAM_ERR;  ??
+		}
+	}
+	
+	/** setCellClue() sets the cell's value and its status to CLUE. */
+	public void setCellClue(int row, int col, int value)
+	{
+		if (row >= 0 && row < size && col >= 0 && col < size && (value >= 1 && value <= size)) {
+			cells[row][col] = value;
+			isClue[row][col] = true;
+		}
+		else {
+			System.err.printf("SudokuPuzzle.setCellClue(): parameter(s) out of range, row=%d, col=%d, value=%d\n", row, col, value);
 			// return PARAM_ERR;  ??
 		}
 	}
