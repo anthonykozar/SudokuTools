@@ -12,7 +12,7 @@ import java.math.*;
 import javax.swing.*;
 import java.util.*;
 
-public class SudokuView extends JFrame implements MouseListener
+public class SudokuView extends JFrame implements MouseListener, KeyListener
 {
 	private final static int	winWidth = 500;
 	private final static int	winHeight = 500;
@@ -24,11 +24,15 @@ public class SudokuView extends JFrame implements MouseListener
 	private final static int	lgNumYOffset = 37;
 	private final static int	smNumXOffset[] = {7, 22, 37, 7, 22, 37, 7, 22, 37};
 	private final static int	smNumYOffset[] = {16, 16, 16, 31, 31, 31, 46, 46, 46};
+	private final static Color	selectionColor = new Color(255, 255, 180);
 	
+	enum Direction { UP, RIGHT, DOWN, LEFT, NEXT, PREVIOUS };
+
 	private Font	largeNumFont;
 	private Font	smallNumFont;
 	
-	private SudokuPuzzle	puzzleModel;	// ref to the puzzle model object to be displayed
+	private SudokuPuzzle	puzzleModel;						// ref to the puzzle model object to be displayed
+	private CellCoord		selectedCell = new CellCoord();		// top left corner (0,0)
 	private	boolean			showCandidates = false;
 	private boolean			solving = false;	// TEMP -- REMOVE
 	
@@ -38,6 +42,7 @@ public class SudokuView extends JFrame implements MouseListener
 		setSize(winWidth, winHeight);
 		setVisible(true);
 		addMouseListener(this);
+		addKeyListener(this);
 		
 		largeNumFont = new Font("Lucida Grande", Font.PLAIN, 30);
 		smallNumFont = new Font("Lucida Grande", Font.PLAIN, 13);
@@ -113,6 +118,10 @@ public class SudokuView extends JFrame implements MouseListener
 			}
 		}
 		
+		// fill background of the selected cell
+		g.setColor(selectionColor);
+		g.fillRect(gridLeft + cellSize*selectedCell.getColumn() + 2, gridTop + cellSize*selectedCell.getRow() + 2, cellSize-3, cellSize-3);
+
 		// draw puzzle cell contents
 		int cellstatus, cellvalue, curCellX, curCellY, maxCandidate, lgNumXOffset;
 		
@@ -151,8 +160,50 @@ public class SudokuView extends JFrame implements MouseListener
 		
 		
 	}
-
-	public	void mouseClicked( MouseEvent event )
+	
+	public void moveSelection(Direction dir)
+	{
+		int row, col;
+		
+		switch (dir) {
+			case UP:
+				// % operator can give a negative result if the dividend is negative!
+				selectedCell.setRow((selectedCell.getRow()-1+puzzleModel.getSize()) % puzzleModel.getSize());
+				break;
+			case DOWN:
+				selectedCell.setRow((selectedCell.getRow()+1) % puzzleModel.getSize());
+				break;
+			case LEFT:
+				// % operator can give a negative result if the dividend is negative!
+				selectedCell.setColumn((selectedCell.getColumn()-1+puzzleModel.getSize()) % puzzleModel.getSize());
+				break;
+			case RIGHT:
+				selectedCell.setColumn((selectedCell.getColumn()+1) % puzzleModel.getSize());
+				break;
+			case NEXT:
+				col = selectedCell.getColumn()+1;
+				if (col >= puzzleModel.getSize()) {
+					// wrap around to the next row
+					col = 0;
+					row = selectedCell.getRow()+1;
+					if (row >= puzzleModel.getSize()) {
+						// wrap back to cell (0,0)
+						row = 0;
+					}
+				}
+				else row = selectedCell.getRow();
+				selectedCell.setCoord(row, col);
+				break;
+			case PREVIOUS:
+				// FIXME: finish implementing wrapping behavior
+				selectedCell.setColumn((selectedCell.getColumn()-1+puzzleModel.getSize()) % puzzleModel.getSize());
+				break;
+		}
+		// System.out.printf("Selected cell: (%d, %d)\n", selectedCell.getRow(), selectedCell.getColumn());
+		this.repaint();
+	}
+	
+	public void mouseClicked(MouseEvent event)
 	{		
 		// first click fills in all candidates
 		if (!showCandidates)  showCandidates = !showCandidates;
@@ -197,11 +248,94 @@ public class SudokuView extends JFrame implements MouseListener
 		this.repaint();
 	}
 	
-	public	void mousePressed( MouseEvent event )	{}
-	public	void mouseReleased( MouseEvent event )	{}
-	public	void mouseEntered( MouseEvent event )	{}
-	public	void mouseExited( MouseEvent event )	{}
+	public void mousePressed(MouseEvent event)	{}
+	public void mouseReleased(MouseEvent event)	{}
+	public void mouseEntered(MouseEvent event)	{}
+	public void mouseExited(MouseEvent event)	{}
 	
+	/* These 3 methods are the implementation of the KeyListener interface. */
+	
+	public void keyPressed(KeyEvent event)
+	{
+		int		key = event.getKeyCode();
+		// System.out.println("keyPressed event: " + key);
+		
+		// Tab and arrow keys change the selected square when editing
+		if	(key == KeyEvent.VK_TAB) {
+			// System.out.println("Received tab ");
+			moveSelection(Direction.NEXT);
+		}
+		else if	(key == KeyEvent.VK_RIGHT) {
+			// System.out.println("Received right arrow");
+			moveSelection(Direction.RIGHT);
+		}
+		else if	(key == KeyEvent.VK_LEFT) {
+			// System.out.println("Received left arrow");
+			moveSelection(Direction.LEFT);
+		}
+		else if	(key == KeyEvent.VK_UP) {
+			// System.out.println("Received up arrow");
+			moveSelection(Direction.UP);
+		}
+		else if	(key == KeyEvent.VK_DOWN) {
+			// System.out.println("Received down arrow");
+			moveSelection(Direction.DOWN);
+		}
+		
+	}
+	
+	public void keyReleased(KeyEvent event)
+	{
+		int		key = event.getKeyCode();
+		// System.out.println("keyReleased event: " + key);
+	}
+	
+	public void keyTyped(KeyEvent event) 
+	{
+		char	key = event.getKeyChar();
+		// System.out.println("keyTyped event: " + key);
+		
+		if	(key == '!') {
+			// '!' exits the program
+			System.exit(0);
+		}
+		else if	(key == 'e' || key == 'E') {
+			// 'e' and 'E' 
+		}
+		else if	(key == 's' || key == 'S') {
+			// 's' and 'S' 
+		}
+		else if	(key == 'r' || key == 'R') {
+			// 'r' and 'R' reset the puzzle to clues only
+			// RandomizeParms();
+			this.repaint();
+		}
+		else if	(Character.isDigit(key)) {
+			// number keys change the value of the current cell and
+			// advance the selection to the next cell
+			int value = Integer.parseInt("" + key);
+			if (value <= puzzleModel.getSize()) {
+				if (value != 0) {
+					puzzleModel.setCellClue(selectedCell.getRow(), selectedCell.getColumn(), value);
+				}
+				else puzzleModel.setCellValue(selectedCell.getRow(), selectedCell.getColumn(), SudokuPuzzle.EMPTY_CELL);
+				moveSelection(Direction.NEXT);
+			}
+			else {
+				// TODO: Beep at user to let them know they entered an invalid value ?
+			}
+		}
+		else if	(key =='\n') {
+			// when 'Enter' is pressed
+		}
+		else {
+			// for all other keys, advance the selection to the next cell
+			moveSelection(Direction.NEXT);
+		}
+		
+		return;
+	}
+
 	public static void main( String args[] )
 	{
 		// my puzzles
