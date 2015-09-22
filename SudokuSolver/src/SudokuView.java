@@ -203,7 +203,7 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 		this.repaint();
 	}
 	
-	public void mouseClicked(MouseEvent event)
+	public void solveNextStep()
 	{		
 		// first click fills in all candidates
 		if (!showCandidates) {
@@ -247,8 +247,10 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 			}
 			puzzleModel.recalculateAllCandidates();
 		}
-		
-		this.repaint();
+	}
+	
+	public void mouseClicked(MouseEvent event)
+	{		
 	}
 	
 	public void mousePressed(MouseEvent event)	{}
@@ -330,6 +332,8 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 		}
 		else if	(key =='\n') {
 			// when 'Enter' is pressed
+			solveNextStep();
+			this.repaint();			
 		}
 		else {
 			// for all other keys, advance the selection to the next cell
