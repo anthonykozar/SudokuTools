@@ -206,9 +206,12 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 	public void mouseClicked(MouseEvent event)
 	{		
 		// first click fills in all candidates
-		if (!showCandidates)  showCandidates = !showCandidates;
+		if (!showCandidates) {
+			puzzleModel.resetAllCandidates();
+			showCandidates = !showCandidates;
+		}
 		// second click recalculates only valid candidates
-		else if (!solving){
+		else if (!solving) {
 			puzzleModel.recalculateAllCandidates();
 			solving = true;
 		}
