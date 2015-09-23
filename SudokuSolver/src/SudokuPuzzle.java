@@ -510,6 +510,27 @@ public class SudokuPuzzle
 		return madeChanges;
 	}
 	
+	/** resetAllCells() returns the puzzle to a completely unsolved state where only
+		the CLUE cells have values.  It does so by setting all SOLVED and UNSOLVED cells
+		to EMPTY_CELL (i.e. UNSOLVED) and sets their candidates (1 to size) to true.
+	 */
+	public void resetAllCells()
+	{
+		// iterate over the puzzle's cells
+		for (int row = 0; row < size; row++) {
+			for (int col = 0; col < size; col++) {
+				// set the value of SOLVED cells to EMPTY_CELL (thereby making them UNSOLVED)
+				if (getCellStatus(row, col) == SOLVED) {
+					cells[row][col] = EMPTY_CELL;
+				}
+			}
+		}
+		
+		// set the candidates for all UNSOLVED cells
+		resetAllCandidates();
+	}
+	
+	
 	// set all cell values based on the given puzzleString (see description above)
 	public void setAllCells(String puzzleString)
 	{

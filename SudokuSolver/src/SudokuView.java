@@ -249,6 +249,12 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 		}
 	}
 	
+	public void resetPuzzle()
+	{
+		puzzleModel.resetAllCells();
+		this.repaint();
+	}
+	
 	public void mouseClicked(MouseEvent event)
 	{		
 	}
@@ -312,8 +318,7 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 		}
 		else if	(key == 'r' || key == 'R') {
 			// 'r' and 'R' reset the puzzle to clues only
-			// RandomizeParms();
-			this.repaint();
+			resetPuzzle();
 		}
 		else if	(Character.isDigit(key)) {
 			// number keys change the value of the current cell and
