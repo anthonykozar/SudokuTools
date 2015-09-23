@@ -37,16 +37,18 @@ public class SudokuSolverApp extends JFrame
 	private final static int MenuCmd_Save_As				= 8;
 	private final static int MenuCmd_Export					= 9;
 	
-	private final static int MenuCmd_Edit_Puzzle			= 10;
-	private final static int MenuCmd_Solve_Next				= 11;
-	private final static int MenuCmd_Solve_All				= 12;
-	private final static int MenuCmd_Reset_Puzzle			= 13;
-	private final static int MenuCmd_Clear_Puzzle			= 14;
-	private final static int MenuCmd_Edit_Regions			= 15;
+	private final static int MenuCmd_Edit_Cell_Values		= 20;
+	private final static int MenuCmd_Edit_Clues				= 21;
+	private final static int MenuCmd_Edit_Reserved_Cells	= 22;
+	private final static int MenuCmd_Edit_Regions			= 23;
+	private final static int MenuCmd_Solve_Next				= 24;
+	private final static int MenuCmd_Solve_All				= 25;
+	private final static int MenuCmd_Reset_Puzzle			= 26;
+	private final static int MenuCmd_Clear_Puzzle			= 27;
 
-	private final static int MenuCmd_4x4_Easy_1				= 16;
-	private final static int MenuCmd_9x9_My_First			= 17;
-	private final static int MenuCmd_9x9_My_Second			= 18;
+	private final static int MenuCmd_4x4_Easy_1				= 30;
+	private final static int MenuCmd_9x9_My_First			= 31;
+	private final static int MenuCmd_9x9_My_Second			= 32;
 	
 	// my puzzles
 	String  size4    = "4.../.1.2/..../2.3.";
@@ -161,7 +163,9 @@ public class SudokuSolverApp extends JFrame
 		AddMenuItem(help, "Help...", MenuCmd_Help, 'H');
 		
 		// Puzzle menu items
-		AddMenuItem(puzzle, "Edit Puzzle", MenuCmd_Edit_Puzzle);
+		AddMenuItem(puzzle, "Edit Cell Values", MenuCmd_Edit_Cell_Values);
+		AddMenuItem(puzzle, "Edit Clues", MenuCmd_Edit_Clues);
+		AddMenuItem(puzzle, "Edit Reserved Cells", MenuCmd_Edit_Reserved_Cells);
 		AddMenuItem(puzzle, "Edit Regions", MenuCmd_Edit_Regions);
 		// TODO: add separator
 		AddMenuItem(puzzle, "Solve Next", MenuCmd_Solve_Next);
@@ -210,7 +214,13 @@ public class SudokuSolverApp extends JFrame
 				break;
 			case MenuCmd_Export:
 				break;
-			case MenuCmd_Edit_Puzzle:
+			case MenuCmd_Edit_Cell_Values:
+				break;
+			case MenuCmd_Edit_Reserved_Cells:
+				break;
+			case MenuCmd_Edit_Clues:
+				break;
+			case MenuCmd_Edit_Regions:
 				break;
 			case MenuCmd_Solve_Next:
 				break;
@@ -219,8 +229,6 @@ public class SudokuSolverApp extends JFrame
 			case MenuCmd_Reset_Puzzle:
 				break;
 			case MenuCmd_Clear_Puzzle:
-				break;
-			case MenuCmd_Edit_Regions:
 				break;
 			case MenuCmd_4x4_Easy_1:
 				newwindow = new SudokuView();
