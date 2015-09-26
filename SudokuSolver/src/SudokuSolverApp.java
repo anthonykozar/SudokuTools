@@ -56,7 +56,8 @@ public class SudokuSolverApp extends JFrame
 	String	second9x9 = "";
 	
 	private ActionListener	menulistener;
-
+	private static boolean	runningOnMacOSX;
+	private static int		primaryCommandKey;
 	
 	public static void main(String[] args)
 	{
@@ -67,6 +68,14 @@ public class SudokuSolverApp extends JFrame
         	// The next line doesn't work in recent JVMs on OS X,
         	// so we also include -Xdock:name="App name" in the runtime config
         	System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+        	// use the Apple/Command key for command shortcuts
+         	primaryCommandKey = ActionEvent.META_MASK;
+         	runningOnMacOSX = true;
+        }
+        else {
+        	// use the Control key for command shortcuts
+         	primaryCommandKey = ActionEvent.CTRL_MASK;
+         	runningOnMacOSX = true;
         }
 		
         // create main window
@@ -122,6 +131,7 @@ public class SudokuSolverApp extends JFrame
 		JMenuItem	menuitem;
 
 		menuitem = new MyMenuItem(menutext, commandID, mnemonic);
+		menuitem.setAccelerator(KeyStroke.getKeyStroke(mnemonic, primaryCommandKey));
 		menuitem.addActionListener(menulistener);
 		menu.add(menuitem);		
 	}
@@ -148,35 +158,35 @@ public class SudokuSolverApp extends JFrame
 		help = new JMenu("Help");
 		
 		// File menu items
-		AddMenuItem(file, "New Puzzle...", MenuCmd_New_Puzzle, 'N');
-		AddMenuItem(file, "Open...", MenuCmd_Open, 'O');
-		// TODO: add separator
-		AddMenuItem(file, "Close", MenuCmd_Close, 'W');
-		AddMenuItem(file, "Save", MenuCmd_Save, 'S');
+		AddMenuItem(file, "New Puzzle...", MenuCmd_New_Puzzle, KeyEvent.VK_N);
+		AddMenuItem(file, "Open...", MenuCmd_Open, KeyEvent.VK_O);
+		file.addSeparator();
+		AddMenuItem(file, "Close", MenuCmd_Close, KeyEvent.VK_W);
+		AddMenuItem(file, "Save", MenuCmd_Save, KeyEvent.VK_S);
 		AddMenuItem(file, "Save As...", MenuCmd_Save_As);
 		AddMenuItem(file, "Export...", MenuCmd_Export);
-		// TODO: add separator
-		AddMenuItem(file, "Quit", MenuCmd_Quit, 'Q');		
+		file.addSeparator();
+		AddMenuItem(file, "Quit", MenuCmd_Quit, KeyEvent.VK_Q);
 
 		// Help menu items
-		AddMenuItem(help, "About " + APP_NAME + "...", MenuCmd_About, 'A');
-		AddMenuItem(help, "Help...", MenuCmd_Help, 'H');
+		AddMenuItem(help, "About " + APP_NAME + "...", MenuCmd_About);
+		AddMenuItem(help, "Help...", MenuCmd_Help, KeyEvent.VK_H);
 		
 		// Puzzle menu items
 		AddMenuItem(puzzle, "Edit Cell Values", MenuCmd_Edit_Cell_Values);
 		AddMenuItem(puzzle, "Edit Clues", MenuCmd_Edit_Clues);
 		AddMenuItem(puzzle, "Edit Reserved Cells", MenuCmd_Edit_Reserved_Cells);
 		AddMenuItem(puzzle, "Edit Regions", MenuCmd_Edit_Regions);
-		// TODO: add separator
+		puzzle.addSeparator();
 		AddMenuItem(puzzle, "Solve Next", MenuCmd_Solve_Next);
 		AddMenuItem(puzzle, "Solve All", MenuCmd_Solve_All);
-		AddMenuItem(puzzle, "Reset Puzzle", MenuCmd_Reset_Puzzle);
-		// TODO: add separator
+		AddMenuItem(puzzle, "Reset Puzzle", MenuCmd_Reset_Puzzle, KeyEvent.VK_R);
+		puzzle.addSeparator();
 		AddMenuItem(puzzle, "Clear Puzzle...", MenuCmd_Clear_Puzzle);
 
 		// Examples menu items
 		AddMenuItem(examples, "4x4 Easy", MenuCmd_4x4_Easy_1);
-		// TODO: add separator
+		examples.addSeparator();
 		AddMenuItem(examples, "My first 9x9", MenuCmd_9x9_My_First);
 		// AddMenuItem(examples, "My second 9x9", MenuCmd_9x9_My_Second);
 
