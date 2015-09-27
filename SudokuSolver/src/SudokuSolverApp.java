@@ -50,7 +50,7 @@ public class SudokuSolverApp extends JFrame implements MenuHandler
         else {
         	// use the Control key for command shortcuts
          	primaryCommandKey = ActionEvent.CTRL_MASK;
-         	runningOnMacOSX = true;
+         	runningOnMacOSX = false;
         }
 		
         // create main window
@@ -157,9 +157,11 @@ public class SudokuSolverApp extends JFrame implements MenuHandler
 		AddMenuItem(file, winmenulistener, "Save", MenuHandler.Cmd_Save, KeyEvent.VK_S);
 		AddMenuItem(file, winmenulistener, "Save As...", MenuHandler.Cmd_Save_As);
 		AddMenuItem(file, winmenulistener, "Export...", MenuHandler.Cmd_Export);
-		file.addSeparator();
-		AddMenuItem(file, appmenulistener, "Quit", MenuHandler.Cmd_Quit, KeyEvent.VK_Q);
-
+		if (!runningOnMacOSX) {
+			file.addSeparator();
+			AddMenuItem(file, appmenulistener, "Exit", MenuHandler.Cmd_Quit);
+		}
+		
 		// Help menu items
 		AddMenuItem(help, appmenulistener, "About " + APP_NAME + "...", MenuHandler.Cmd_About);
 		AddMenuItem(help, appmenulistener, "Help...", MenuHandler.Cmd_Help, KeyEvent.VK_H);
