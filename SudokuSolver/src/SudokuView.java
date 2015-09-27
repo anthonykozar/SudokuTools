@@ -253,6 +253,8 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 	public void resetPuzzle()
 	{
 		puzzleModel.resetAllCells();
+		showCandidates = false;
+		solving = false;
 		this.repaint();
 	}
 	
