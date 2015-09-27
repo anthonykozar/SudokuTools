@@ -10,9 +10,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.*;
 import javax.swing.*;
+
 import java.util.*;
 
-public class SudokuView extends JFrame implements MouseListener, KeyListener
+public class SudokuView extends JFrame implements MouseListener, KeyListener, MenuHandler
 {
 	private final static int	winWidth = 500;
 	private final static int	winHeight = 500;
@@ -346,6 +347,44 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener
 		}
 		
 		return;
+	}
+	
+	// method for the MenuHandler interface
+	public boolean DoMenuCommand(int menuCommand)
+	{
+		switch (menuCommand) {
+			case MenuHandler.Cmd_Close:
+				break;
+			case MenuHandler.Cmd_Save:
+				break;
+			case MenuHandler.Cmd_Save_As:
+				break;
+			case MenuHandler.Cmd_Export:
+				break;
+			case MenuHandler.Cmd_Edit_Cell_Values:
+				break;
+			case MenuHandler.Cmd_Edit_Reserved_Cells:
+				break;
+			case MenuHandler.Cmd_Edit_Clues:
+				break;
+			case MenuHandler.Cmd_Edit_Regions:
+				break;
+			case MenuHandler.Cmd_Solve_Next:
+				solveNextStep();
+				this.repaint();			
+				break;
+			case MenuHandler.Cmd_Solve_All:
+				break;
+			case MenuHandler.Cmd_Reset_Puzzle:
+				resetPuzzle();
+				break;
+			case MenuHandler.Cmd_Clear_Puzzle:
+				break;
+			default:
+				return false;
+		}
+		
+		return true;
 	}
 
 	public static void main( String args[] )
