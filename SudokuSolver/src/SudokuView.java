@@ -38,6 +38,7 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 	private CellCoord		selectedCell = new CellCoord();		// top left corner (0,0)
 	private EditMode		editingMode = EditMode.CLUES;
 	private	boolean			showCandidates = false;
+	private	boolean			showRegionColors = false;
 	private boolean			solving = false;	// TEMP -- REMOVE
 	private float			saturation = 0.36f;	// TEMP -- REMOVE
 	
@@ -155,7 +156,7 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 		maxCandidate = (gridSize < 9) ? gridSize : 9;				// can only display candidates up to gridSize or 9
 		for ( int row = 0; row < gridSize; row++ )	{
 			for ( int col = 0; col < gridSize; col++ )	{
-				if (editingMode == EditMode.REGIONS) {
+				if (showRegionColors || editingMode == EditMode.REGIONS) {
 					// fill background of the cell with the region's color
 					g.setColor(regionColors[puzzleModel.getCellRegionIdx(row, col)]);
 					g.fillRect(gridLeft + cellSize*col + 2, gridTop + cellSize*row + 2, cellSize-3, cellSize-3);
@@ -358,7 +359,14 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 			this.repaint();
 		}
 		else if	(key == 's' || key == 'S') {
-			// 's' and 'S' 
+			// 's' and 'S' toggle whether candidates are shown
+			showCandidates = !showCandidates;
+			this.repaint();
+		}
+		else if	(key == 'c' || key == 'C') {
+			// 'c' and 'C' toggle whether region colors are shown (when not editing regions)
+			showRegionColors = !showRegionColors;
+			this.repaint();
 		}
 		else if	(key == 'r' || key == 'R') {
 			// 'r' and 'R' reset the puzzle to clues only
