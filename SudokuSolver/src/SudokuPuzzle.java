@@ -112,33 +112,24 @@ public class SudokuPuzzle
 	
 	private void InitializeArrays()
 	{
-		// Java arrays are initiliazed to 0/false/null
+		// Java arrays are initialized to 0/false/null
 		cells = new int[size][size];
 		isClue = new boolean[size][size];
 		candidates = new boolean[size][size][size];
-		regionCellLists = new int[size][size][2];		// assume 'size' other regions for now 
+		regionCellLists = new int[size][size][2];		// FIXME: assume 'size' other regions for now
 	}
 	
 	private void MakeDefaultRegionLists()
 	{
-		int		boxwidth, boxheight, rgnidx;
+		int		rgnidx;
 		int[]	listidx;
 		
-		if (size >= regionBoxWidths.length || regionBoxWidths[size] == 0) {
-			// would like to call a function here to make "broken diagonals"
-			// the default regions for other sizes (see Wikipedia)
-			System.err.printf("Can't make default regions yet for size=%d\n", size);
-			return;
-		}
-		
-		boxwidth = regionBoxWidths[size];
-		boxheight = regionBoxHeights[size];
 		listidx = new int[size];				// per list indices for where to add next cell
 		
 		// map every row/col pair to one of the region sets
 		for (int row = 0; row < size; row++) {
 			for (int col = 0; col < size; col++) {
-				rgnidx = (row/boxheight)*boxheight + (col/boxwidth);
+				rgnidx = getCellDefaultRegion(row, col);
 				regionCellLists[rgnidx][ listidx[rgnidx] ][0] = row;
 				regionCellLists[rgnidx][ listidx[rgnidx] ][1] = col;
 				++listidx[rgnidx];
@@ -188,19 +179,33 @@ public class SudokuPuzzle
 		}
 	}
 	
+	private int getCellDefaultRegion(int row, int col)
+	{
+		int	boxwidth, boxheight, rgnidx;
+		
+		if (size >= regionBoxWidths.length || regionBoxWidths[size] == 0) {
+			// use "broken diagonals" as the default regions for non-standard sizes (see Wikipedia)
+			rgnidx = col - row;
+			if (rgnidx < 0)  rgnidx += size;
+		}
+		else {
+			// default regions are boxes for standard sizes
+			boxwidth = regionBoxWidths[size];
+			boxheight = regionBoxHeights[size];
+			rgnidx = (row/boxheight)*boxheight + (col/boxwidth);
+		}
+		
+		return rgnidx;
+	}
+	
 	/** Returns the index of the first OTHER-type region for the cell at (row,col)
 		NOTE: only works for the "default" regions created for some sizes at this time
 	 */
 	public int getCellRegionIdx(int row, int col)
 	{
-		if (size >= regionBoxWidths.length || regionBoxWidths[size] == 0) {
-			// FIXME: make this function work always
-			System.err.printf("SudokuPuzzle.getCellRegionIdx(): This function doesn't work for size=%d yet!\n", size);
-			return PARAM_ERR;
-		}
-		
 		if (row >= 0 && row < size && col >= 0 && col < size) {
-			return (row/regionBoxHeights[size])*regionBoxHeights[size] + (col/regionBoxWidths[size]);
+			// FIXME: make this function work for non-default regions!
+			return getCellDefaultRegion(row, col);
 		}
 		else {
 			System.err.printf("SudokuPuzzle.getCellRegionIdx(): parameter(s) out of range, row=%d, col=%d\n", row, col);
