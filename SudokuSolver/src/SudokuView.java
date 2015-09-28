@@ -28,14 +28,18 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 	private final static Color	selectionColor = new Color(255, 255, 180);
 	
 	enum Direction { UP, RIGHT, DOWN, LEFT, NEXT, PREVIOUS };
+	enum EditMode  { VALUES, CLUES, RESERVES, REGIONS };
 
 	private Font	largeNumFont;
 	private Font	smallNumFont;
+	private Color[]	regionColors;
 	
 	private SudokuPuzzle	puzzleModel;						// ref to the puzzle model object to be displayed
 	private CellCoord		selectedCell = new CellCoord();		// top left corner (0,0)
+	private EditMode		editingMode = EditMode.CLUES;
 	private	boolean			showCandidates = false;
 	private boolean			solving = false;	// TEMP -- REMOVE
+	private float			saturation = 0.36f;	// TEMP -- REMOVE
 	
 	public SudokuView()
 	{
@@ -47,6 +51,7 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 		
 		largeNumFont = new Font("Lucida Grande", Font.PLAIN, 30);
 		smallNumFont = new Font("Lucida Grande", Font.PLAIN, 13);
+		InitializeColors(9);
 	}
 	
 	public SudokuPuzzle getPuzzle()
@@ -57,6 +62,23 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 	public void setPuzzle(SudokuPuzzle puzzle)
 	{
 		puzzleModel = puzzle;
+		InitializeColors(puzzle.getSize());
+	}
+	
+	private void InitializeColors(int num)
+	{
+		float	hue, /*saturation,*/ brightness, incr;
+		
+		regionColors = new Color[num];
+		
+		// choose N well-spaced (hopefully distinct) background colors for regions
+		hue = 0.0f; /*saturation = 0.4f;*/ brightness = 1.0f;
+		// incr = (float)(0.5 * (Math.sqrt(5.0) + 1.0));			// the golden ratio
+		incr = 1.0f / num;
+		for (int i = 0; i < num; i++) {
+			regionColors[i] = Color.getHSBColor(hue, saturation, brightness);
+			hue += incr;
+		}
 	}
 	
 	public void paint( Graphics g )
@@ -119,16 +141,26 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 			}
 		}
 		
-		// fill background of the selected cell
-		g.setColor(selectionColor);
-		g.fillRect(gridLeft + cellSize*selectedCell.getColumn() + 2, gridTop + cellSize*selectedCell.getRow() + 2, cellSize-3, cellSize-3);
-
+		if (editingMode == EditMode.CLUES || editingMode == EditMode.VALUES) {
+			// fill background of the selected cell
+			g.setColor(selectionColor);
+			g.fillRect(gridLeft + cellSize*selectedCell.getColumn() + 2, gridTop + cellSize*selectedCell.getRow() + 2, cellSize-3, cellSize-3);
+		}
+		else if (editingMode == EditMode.RESERVES) {
+			
+		}
 		// draw puzzle cell contents
 		int cellstatus, cellvalue, curCellX, curCellY, maxCandidate, lgNumXOffset;
 		
 		maxCandidate = (gridSize < 9) ? gridSize : 9;				// can only display candidates up to gridSize or 9
 		for ( int row = 0; row < gridSize; row++ )	{
 			for ( int col = 0; col < gridSize; col++ )	{
+				if (editingMode == EditMode.REGIONS) {
+					// fill background of the cell with the region's color
+					g.setColor(regionColors[puzzleModel.getCellRegionIdx(row, col)]);
+					g.fillRect(gridLeft + cellSize*col + 2, gridTop + cellSize*row + 2, cellSize-3, cellSize-3);
+				}
+				
 				cellstatus = puzzleModel.getCellStatus(row, col);
 				if (cellstatus == SudokuPuzzle.UNSOLVED) {
 					if (showCandidates) {
@@ -313,8 +345,17 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 			// '!' exits the program
 			System.exit(0);
 		}
-		else if	(key == 'e' || key == 'E') {
-			// 'e' and 'E' 
+		else if	(key == '+' || key == '=') {
+			saturation += 0.01f;
+			System.out.println("saturation = " + saturation);
+			InitializeColors(puzzleModel.getSize());
+			this.repaint();
+		}
+		else if	(key == '-') {
+			saturation -= 0.01f;
+			System.out.println("saturation = " + saturation);
+			InitializeColors(puzzleModel.getSize());
+			this.repaint();
 		}
 		else if	(key == 's' || key == 'S') {
 			// 's' and 'S' 
@@ -364,12 +405,20 @@ public class SudokuView extends JFrame implements MouseListener, KeyListener, Me
 			case MenuHandler.Cmd_Export:
 				break;
 			case MenuHandler.Cmd_Edit_Cell_Values:
-				break;
-			case MenuHandler.Cmd_Edit_Reserved_Cells:
+				editingMode = EditMode.VALUES;
+				this.repaint();
 				break;
 			case MenuHandler.Cmd_Edit_Clues:
+				editingMode = EditMode.CLUES;
+				this.repaint();
+				break;
+			case MenuHandler.Cmd_Edit_Reserved_Cells:
+				editingMode = EditMode.RESERVES;
+				this.repaint();
 				break;
 			case MenuHandler.Cmd_Edit_Regions:
+				editingMode = EditMode.REGIONS;
+				this.repaint();
 				break;
 			case MenuHandler.Cmd_Solve_Next:
 				solveNextStep();
