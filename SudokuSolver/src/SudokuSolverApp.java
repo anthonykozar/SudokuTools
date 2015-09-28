@@ -27,6 +27,7 @@ public class SudokuSolverApp extends JFrame implements MenuHandler
 
 	// my puzzles
 	String  size4    = "4.../.1.2/..../2.3.";
+	String  easy5x5  = "1.3../5..../...../...../.1..4";
 	String	first9x9 = "..57.64../...5.3.8./1...8...2/42.....18/..6....../71......9/....3...6/.....1.../..34.29..";
 	String	second9x9 = "";
 	
@@ -183,7 +184,19 @@ public class SudokuSolverApp extends JFrame implements MenuHandler
 		examples.addSeparator();
 		AddMenuItem(examples, appmenulistener, "My first 9x9", MenuHandler.Cmd_9x9_My_First);
 		// AddMenuItem(examples, appmenulistener, "My second 9x9", MenuHandler.Cmd_9x9_My_Second);
-
+		examples.addSeparator();
+		AddMenuItem(examples, appmenulistener, "5x5 Easy", MenuHandler.Cmd_5x5_Easy_1);
+		
+		// TEMPORARY items for testing
+		examples.addSeparator();
+		AddMenuItem(examples, appmenulistener, "New 5x5", 105);
+		AddMenuItem(examples, appmenulistener, "New 6x6", 106);
+		AddMenuItem(examples, appmenulistener, "New 7x7", 107);
+		AddMenuItem(examples, appmenulistener, "New 8x8", 108);
+		AddMenuItem(examples, appmenulistener, "New 10x10", 110);
+		AddMenuItem(examples, appmenulistener, "New 11x11", 111);
+		AddMenuItem(examples, appmenulistener, "New 12x12", 112);
+		
 		mbar.add(file);
 		mbar.add(edit);
 		mbar.add(puzzle);
@@ -245,6 +258,20 @@ public class SudokuSolverApp extends JFrame implements MenuHandler
 			case MenuHandler.Cmd_9x9_My_Second:
 				newwindow = new SudokuView();
 				newwindow.setPuzzle(new SudokuPuzzle(9, second9x9));
+				break;
+			case MenuHandler.Cmd_5x5_Easy_1:
+				newwindow = new SudokuView();
+				newwindow.setPuzzle(new SudokuPuzzle(5, easy5x5));
+				break;
+			case 105:
+			case 106:
+			case 107:
+			case 108:
+			case 110:
+			case 111:
+			case 112:
+				newwindow = new SudokuView();
+				newwindow.setPuzzle(new SudokuPuzzle(menuCommand - 100));
 				break;
 		}
 		

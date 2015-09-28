@@ -32,6 +32,7 @@ public interface MenuHandler {
 	public final static int Cmd_4x4_Easy_1				= 30;
 	public final static int Cmd_9x9_My_First			= 31;
 	public final static int Cmd_9x9_My_Second			= 32;
+	public final static int Cmd_5x5_Easy_1				= 33;
 	
 	// Should return true if the command was handled, otherwise false.
 	public boolean DoMenuCommand(int menuCommand);
